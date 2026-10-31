@@ -2,7 +2,7 @@ package cn.pi.overtime;
 import android.service.notification.*;import android.app.Notification;import android.os.*;import java.util.*;
 public final class DingNoticeService extends NotificationListenerService {
  public static volatile boolean connected=false;
- public void onListenerConnected(){connected=true;getSharedPreferences("attendance",0).edit().putBoolean("listenerConnected",true).apply();}
+ public void onListenerConnected(){connected=true;getSharedPreferences("attendance",0).edit().putBoolean("listenerConnected",true).apply();try{StatusBarNotification[] active=getActiveNotifications();if(active!=null)for(StatusBarNotification sbn:active)onNotificationPosted(sbn);}catch(Exception e){}}
  public void onListenerDisconnected(){connected=false;getSharedPreferences("attendance",0).edit().putBoolean("listenerConnected",false).apply();}
  public void onNotificationPosted(StatusBarNotification sbn){
   if(sbn==null||!"com.alibaba.android.rimet".equals(sbn.getPackageName()))return;
@@ -12,6 +12,6 @@ public final class DingNoticeService extends NotificationListenerService {
   StringBuilder s=new StringBuilder();for(String p:parts)s.append(p).append('\n');String text=s.toString().trim();
   if(!text.contains("打卡")&&!text.contains("考勤"))return;
   if(text.length()>12000)text=text.substring(0,12000);
-  try{NoticeStore.receive(this,text,System.currentTimeMillis(),sbn.getKey());}catch(Exception e){getSharedPreferences("attendance",0).edit().putString("noticeError","通知处理失败，请在应用中检查记录").apply();}
+  try{CharSequence title=b.getCharSequence(Notification.EXTRA_TITLE);boolean attendance=title!=null&&(title.toString().contains("考勤打卡")||(title.toString().contains("工作通知")&&text.contains("考勤打卡")));NoticeStore.receive(this,text,sbn.getPostTime(),sbn.getKey(),attendance);}catch(Exception e){getSharedPreferences("attendance",0).edit().putString("noticeError","通知处理失败，请在应用中检查记录").apply();}
  }
 }

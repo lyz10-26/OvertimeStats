@@ -17,6 +17,19 @@ public class NoticeParserTest {
   check(!p("2026-10-30\n08:30 上班打卡失败").certain);
   check(p("2026年10月30日\n8：30 上班打卡：成功").certain);
   check(p("2026-10-30\n08:30 上班打卡成功\n08:30 上班打卡成功").certain);
+  long posted=LocalDateTime.of(2026,10,31,19,9,15).atZone(Rules.ZONE).toInstant().toEpochMilli();
+  String sample="工作通知:个人考勤\n考勤打卡：19:09 下班打卡·成功";
+  r=NoticeParser.parse(sample,posted);check(r.certain);check(r.inferredDate);check(r.kind.equals("out"));check(r.clock.equals("19:09"));check(r.date.equals("2026-10-31"));
+  check(!NoticeParser.parse(sample,posted,false).certain);
+  check(NoticeParser.parse("考勤打卡：19:09 下班打卡·成功",posted,true).certain);
+  check(!NoticeParser.parse("考勤打卡：昨天19:09 下班打卡·成功",posted,true).certain);
+  check(!NoticeParser.parse("考勤打卡：补卡19:09 下班打卡·成功",posted,true).certain);
+  check(!NoticeParser.parse("考勤打卡：10月30日19:09 下班打卡·成功",posted,true).certain);
+  check(!NoticeParser.parse("考勤打卡：18:30 下班打卡·成功",posted,true).certain);
+  check(!NoticeParser.parse("考勤打卡：19:10 下班打卡·成功",posted,true).certain);
+  check(!NoticeParser.parse("工作通知\n考勤打卡：23:59 下班打卡·成功",LocalDateTime.of(2026,11,1,0,1).atZone(Rules.ZONE).toInstant().toEpochMilli()).certain);
+  check(!NoticeParser.parse("工作通知\n考勤打卡：00:01 下班打卡·成功",LocalDateTime.of(2026,11,1,0,1).atZone(Rules.ZONE).toInstant().toEpochMilli()).certain);
+  check(NoticeParser.parse("工作通知\n考勤打卡：19:09 下班打卡·成功",posted+86400000L).date.equals("2026-11-01"));
   System.out.println("PASS: "+n+" notification parser assertions");
  }
 }
