@@ -1,0 +1,8 @@
+{
+  "versionCode": 8,
+  "versionName": "1.4.0",
+  "channel": "release",
+  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.4.0/Overtime-1.4.0.apk",
+  "sha256": "31ec7095353d818602b969d8e43ef9b4f3784a594a5e3117de1f869c181e287f",
+  "notes": "正式版：新增检查更新；日历每个日期显示工作或休息。"
+}
