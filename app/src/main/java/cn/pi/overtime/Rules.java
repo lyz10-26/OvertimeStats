@@ -1,0 +1,33 @@
+package cn.pi.overtime;
+import java.time.*;
+import java.time.format.*;
+public final class Rules {
+ public static final ZoneId ZONE=ZoneId.of("Asia/Shanghai");
+ public static LocalDate today(){return LocalDate.now(ZONE);}
+ public static LocalDateTime time(LocalDate date,String s){
+  if(s==null||s.trim().isEmpty()||s.equals("--"))return null;
+  s=s.trim().replace('T',' ');
+  if(s.startsWith("次日"))return LocalDateTime.of(date.plusDays(1),LocalTime.parse(s.substring(2).trim(),DateTimeFormatter.ofPattern("H:mm[:ss]").withResolverStyle(ResolverStyle.STRICT)));
+  if(s.contains(" "))return LocalDateTime.parse(s,DateTimeFormatter.ofPattern("uuuu-MM-dd H:mm[:ss]").withResolverStyle(ResolverStyle.STRICT));
+  return LocalDateTime.of(date,LocalTime.parse(s,DateTimeFormatter.ofPattern("H:mm[:ss]").withResolverStyle(ResolverStyle.STRICT)));
+ }
+ public static LocalDateTime end(LocalDate d,LocalDateTime in){
+  int sec=in.toLocalTime().toSecondOfDay();sec=Math.max(30600,Math.min(32400,sec));
+  return d.atStartOfDay().plusSeconds(sec+34200);
+ }
+ public static String status(LocalDate d,LocalDateTime in,LocalDateTime out,boolean work){
+  if(in==null)return "缺少上班打卡";
+  if(!in.toLocalDate().equals(d))return "上班日期异常";
+  if(work&&in.toLocalTime().isAfter(LocalTime.of(9,0)))return "迟到记录 · 待确认";
+  if(out==null)return "缺少下班打卡";
+  if(out.isBefore(in)||out.isAfter(d.plusDays(1).atTime(12,0)))return "打卡顺序异常";
+  return "已确认";
+ }
+ public static long minutes(LocalDate d,LocalDateTime in,LocalDateTime out,boolean work,int buffer){
+  if(!status(d,in,out,work).equals("已确认"))return 0;
+  return Math.max(0,Duration.between(start(d,in,work,buffer),out).toMinutes());
+ }
+ public static LocalDateTime start(LocalDate d,LocalDateTime in,boolean work,int buffer){return work?end(d,in).plusMinutes(buffer):in.plusHours(1);}
+ public static String duration(long m){return (m/60)+"小时"+(m%60)+"分钟";}
+ public static String clock(LocalDate d,LocalDateTime t){if(t==null)return "--:--";return (t.toLocalDate().isAfter(d)?"次日 ":"")+t.format(DateTimeFormatter.ofPattern("HH:mm"));}
+}
