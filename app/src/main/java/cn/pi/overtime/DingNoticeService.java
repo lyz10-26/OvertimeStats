@@ -14,11 +14,11 @@ public final class DingNoticeService extends NotificationListenerService {
   Notification n=sbn.getNotification();if(n==null||(n.flags&Notification.FLAG_GROUP_SUMMARY)!=0)return;
   Bundle b=n.extras;if(b==null)return;
   LinkedHashSet<String> parts=new LinkedHashSet<>();
-  for(String k:new String[]{Notification.EXTRA_TITLE,Notification.EXTRA_TITLE_BIG,Notification.EXTRA_TEXT,Notification.EXTRA_BIG_TEXT,Notification.EXTRA_SUB_TEXT,Notification.EXTRA_SUMMARY_TEXT}){
+  for(String k:new String[]{Notification.EXTRA_TITLE,Notification.EXTRA_TITLE_BIG,Notification.EXTRA_TEXT,Notification.EXTRA_BIG_TEXT,Notification.EXTRA_SUB_TEXT,Notification.EXTRA_SUMMARY_TEXT,Notification.EXTRA_INFO_TEXT,Notification.EXTRA_CONVERSATION_TITLE}){
    CharSequence t=b.getCharSequence(k);if(t!=null&&!t.toString().trim().isEmpty())parts.add(t.toString().trim());
   }
   CharSequence[] lines=b.getCharSequenceArray(Notification.EXTRA_TEXT_LINES);if(lines!=null)for(CharSequence l:lines)if(l!=null&&!l.toString().trim().isEmpty())parts.add(l.toString().trim());
-  Parcelable[] messages=b.getParcelableArray(Notification.EXTRA_MESSAGES);if(messages!=null)for(Parcelable item:messages)if(item instanceof Bundle){Bundle message=(Bundle)item;CharSequence body=message.getCharSequence("text");if(body!=null&&!body.toString().trim().isEmpty())parts.add(body.toString().trim());}
+  Parcelable[] messages=b.getParcelableArray(Notification.EXTRA_MESSAGES);if(messages==null)messages=b.getParcelableArray(Notification.EXTRA_HISTORIC_MESSAGES);if(messages!=null)for(Parcelable item:messages)if(item instanceof Bundle){Bundle message=(Bundle)item;CharSequence body=message.getCharSequence("text");if(body!=null&&!body.toString().trim().isEmpty())parts.add(body.toString().trim());}
   if(n.tickerText!=null&&!n.tickerText.toString().trim().isEmpty())parts.add(n.tickerText.toString().trim());
   StringBuilder joined=new StringBuilder();for(String part:parts)joined.append(part).append('\n');String text=joined.toString().trim();
   if(text.length()==0||(!text.contains("打卡")&&!text.contains("考勤")))return;
