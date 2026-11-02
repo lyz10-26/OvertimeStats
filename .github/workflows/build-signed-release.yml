@@ -59,11 +59,36 @@ jobs:
           KEYSTORE="$RUNNER_TEMP/release-signing.jks"
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
           test -s "$KEYSTORE"
+
+          # Validate the JKS store password separately from the alias.
+          if ! keytool -list -keystore "$KEYSTORE" -storetype JKS \
+            -storepass "$ANDROID_KEYSTORE_PASSWORD" >/dev/null 2>&1; then
+            echo "Invalid JKS keystore password or unreadable keystore." >&2
+            exit 1
+          fi
+
+          # Validate that the configured alias exists in this keystore.
+          if ! keytool -list -keystore "$KEYSTORE" -storetype JKS \
+            -storepass "$ANDROID_KEYSTORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" >/dev/null 2>&1; then
+            echo "Configured key alias was not found in the JKS keystore." >&2
+            exit 1
+          fi
+
+          # A certificate request requires the private key, validating key password.
+          if ! keytool -certreq -keystore "$KEYSTORE" -storetype JKS \
+            -storepass "$ANDROID_KEYSTORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" \
+            -keypass "$ANDROID_KEY_PASSWORD" -file "$RUNNER_TEMP/signing-preflight.csr" >/dev/null 2>&1; then
+            echo "Private-key password is invalid or the alias has no accessible private key." >&2
+            exit 1
+          fi
+          rm -f "$RUNNER_TEMP/signing-preflight.csr"
+          echo "JKS password, alias, and private-key password checks passed."
+
           BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.0"
           UNSIGNED="app/build/outputs/apk/release/app-release-unsigned.apk"
           test -s "$UNSIGNED"
           "$BUILD_TOOLS/zipalign" -f -p 4 "$UNSIGNED" "$RUNNER_TEMP/aligned.apk"
-          "$BUILD_TOOLS/apksigner" sign --ks "$KEYSTORE" --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD --out "$RUNNER_TEMP/Overtime-1.5.0.apk" "$RUNNER_TEMP/aligned.apk"
+          "$BUILD_TOOLS/apksigner" sign --ks "$KEYSTORE" --ks-type JKS --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD --out "$RUNNER_TEMP/Overtime-1.5.0.apk" "$RUNNER_TEMP/aligned.apk"
           "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$RUNNER_TEMP/Overtime-1.5.0.apk" | tee "$RUNNER_TEMP/signature.txt"
           ACTUAL="$(sed -n 's/.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/signature.txt" | head -n 1 | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
           EXPECTED="$(printf '%s' "$ANDROID_CERT_SHA256" | tr -d ':[:space:]' | tr '[:upper:]' '[:lower:]')"
