@@ -1,6 +1,7 @@
 package cn.pi.overtime;
 import java.time.*;
 import java.time.format.*;
+import java.util.*;
 public final class Rules {
  public static final ZoneId ZONE=ZoneId.of("Asia/Shanghai");
  public static LocalDate today(){return LocalDate.now(ZONE);}
@@ -28,6 +29,11 @@ public final class Rules {
   return Math.max(0,Duration.between(start(d,in,work,buffer),out).toMinutes());
  }
  public static LocalDateTime start(LocalDate d,LocalDateTime in,boolean work,int buffer){return work?end(d,in).plusMinutes(buffer):in.plusHours(1);}
+ public static LocalDateTime[] punchBounds(Collection<LocalDateTime> punches){
+  if(punches==null||punches.isEmpty())return new LocalDateTime[]{null,null};
+  ArrayList<LocalDateTime> sorted=new ArrayList<>(punches);Collections.sort(sorted);
+  return new LocalDateTime[]{sorted.get(0),sorted.size()>1?sorted.get(sorted.size()-1):null};
+ }
  public static String duration(long m){return (m/60)+"小时"+(m%60)+"分钟";}
  public static String clock(LocalDate d,LocalDateTime t){if(t==null)return "--:--";return (t.toLocalDate().isAfter(d)?"次日 ":"")+t.format(DateTimeFormatter.ofPattern("HH:mm"));}
 }
