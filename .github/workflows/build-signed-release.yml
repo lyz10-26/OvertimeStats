@@ -56,7 +56,7 @@ jobs:
           ANDROID_CERT_SHA256: ${{ secrets.ANDROID_CERT_SHA256 }}
         run: |
           set -euo pipefail
-          KEYSTORE="$RUNNER_TEMP/release-keystore.p12"
+          KEYSTORE="$RUNNER_TEMP/release-signing.jks"
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
           test -s "$KEYSTORE"
           BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.0"
