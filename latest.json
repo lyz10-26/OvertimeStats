@@ -1,8 +1,8 @@
 {
-  "versionCode": 8,
-  "versionName": "1.4.0",
+  "versionCode": 10,
+  "versionName": "1.6.0",
   "channel": "release",
-  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.4.0/Overtime-1.4.0.apk",
-  "sha256": "31ec7095353d818602b969d8e43ef9b4f3784a594a5e3117de1f869c181e287f",
-  "notes": "正式版：新增检查更新；日历每个日期显示工作或休息。"
+  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.6.0/Overtime-1.6.0.apk",
+  "sha256": "f8772647680a15a8f2bf389accf6e60212d353888022daca77b405ce2ad11b52",
+  "notes": "1.6.0：增强钉钉通知提取与去重；完善消息详情和采集状态展示；优化更新版本判断；保留最早打卡为上班、最后打卡为下班的规则。"
 }
