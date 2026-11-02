@@ -14,16 +14,31 @@ public final class NoticeStore {
   NoticeParser.Result parsed=NoticeParser.parse(note.optString("text"),note.optLong("posted"),note.optBoolean("attendanceSource"));
   note.put("date",parsed.date);note.put("clock",parsed.clock);note.put("kind",parsed.kind);note.put("rest",parsed.rest);note.put("reason",parsed.reason);note.put("dateSource",parsed.inferredDate?"通知发布时间推定":"消息正文");
   if(parsed.certain&&p.getBoolean("autoNotice",true)){
-   JSONObject r=all.optJSONObject(parsed.date);if(r==null)r=new JSONObject();String old=r.optString(parsed.kind,"");
-   if(!old.isEmpty())state=old.equals(parsed.clock)||old.equals(parsed.date+" "+parsed.clock)?"重复记录":"待确认";
-   else if("手动修正".equals(r.optString("source"))){note.put("reason","已有手动修正记录，请确认后更新");}
+   JSONObject r=all.optJSONObject(parsed.date);if(r==null)r=new JSONObject();
+   if("手动修正".equals(r.optString("source"))||"钉钉通知·人工确认".equals(r.optString("source"))){note.put("reason","已有人工修正记录，请确认后更新");}
    else{
-    JSONObject candidate=new JSONObject(r.toString());candidate.put(parsed.kind,parsed.clock);
-    LocalDate day=LocalDate.parse(parsed.date);LocalDateTime in=Rules.time(day,candidate.optString("in","")),out=Rules.time(day,candidate.optString("out",""));
-    if(in!=null&&out!=null&&out.isBefore(in)){note.put("reason","上下班顺序异常或跨天，请人工确认所属工作日");}
-    else{candidate.put("source","钉钉通知采集");if(!candidate.has("workday"))candidate.put("workday",!parsed.rest&&day.getDayOfWeek().getValue()<6);candidate.put("noticeEvidence",note.optString("text"));candidate.put(parsed.kind+"DateSource",parsed.inferredDate?"通知发布时间推定":"消息正文");all.put(parsed.date,candidate);state="已自动记录";}
+    LocalDate day=LocalDate.parse(parsed.date);ArrayList<LocalDateTime> punches=new ArrayList<>();
+    JSONArray saved=r.optJSONArray("punchTimes");
+    if(saved!=null){for(int i=0;i<saved.length();i++){try{punches.add(LocalDateTime.parse(saved.getString(i)));}catch(Exception ignored){}}}
+    else{
+     LocalDateTime previousIn=Rules.time(day,r.optString("in","")),previousOut=Rules.time(day,r.optString("out",""));
+     if(previousIn!=null)punches.add(previousIn);if(previousOut!=null)punches.add(previousOut);
+    }
+    LocalDateTime actual=Rules.time(day,parsed.clock);boolean duplicate=punches.contains(actual);
+    if(!duplicate)punches.add(actual);
+    LocalDateTime[] bounds=Rules.punchBounds(punches);
+    if(bounds[0]==null){note.put("reason","未取得有效打卡时间");}
+    else{
+     JSONObject candidate=new JSONObject(r.toString());JSONArray savedTimes=new JSONArray();ArrayList<LocalDateTime> ordered=new ArrayList<>(punches);Collections.sort(ordered);
+     for(LocalDateTime punch:ordered)savedTimes.put(punch.toString());
+     candidate.put("punchTimes",savedTimes);candidate.put("in",Rules.clock(day,bounds[0]));candidate.put("out",bounds[1]==null?"":Rules.clock(day,bounds[1]));
+     candidate.put("source","钉钉通知采集");candidate.put("punchRule","最早打卡为上班，最后一次打卡为下班");
+     if(!candidate.has("workday"))candidate.put("workday",!parsed.rest&&day.getDayOfWeek().getValue()<6);
+     candidate.put("noticeEvidence",note.optString("text"));candidate.put("inDateSource",parsed.inferredDate?"通知发布时间推定":"消息正文");
+     if(bounds[1]!=null)candidate.put("outDateSource",parsed.inferredDate?"通知发布时间推定":"消息正文");
+     all.put(parsed.date,candidate);state=duplicate?"重复记录":"已自动记录";
+    }
    }
-   if(!old.isEmpty()&&state.equals("待确认"))note.put("reason","与已有打卡时间冲突，请确认是否更新");
   }
   note.put("state",state);note.put("processedAt",System.currentTimeMillis());return state;
  }
