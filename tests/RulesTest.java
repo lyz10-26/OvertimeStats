@@ -1,5 +1,5 @@
 package cn.pi.overtime;
-import java.time.*;
+import java.time.*;import java.util.*;
 public class RulesTest {
  static int assertions=0;
  static void eq(Object a,Object b){assertions++;if(!a.equals(b))throw new AssertionError(a+" != "+b);}
@@ -22,6 +22,10 @@ public class RulesTest {
   eq(Rules.minutes(d,Rules.time(d,"08:30"),Rules.time(d,"19:00"),true,30),30L);
   eq(Rules.minutes(d,Rules.time(d,"11:08"),Rules.time(d,"10:00"),false,30),0L);
   eq(Rules.start(d,Rules.time(d,"11:08"),false,30),d.atTime(12,8));
+  LocalDateTime[] bounds=Rules.punchBounds(Arrays.asList(d.atTime(12,0),d.atTime(8,30),d.atTime(18,45),d.atTime(13,0)));
+  eq(bounds[0],d.atTime(8,30));eq(bounds[1],d.atTime(18,45));
+  LocalDateTime[] one=Rules.punchBounds(Collections.singletonList(d.atTime(9,5)));
+  eq(one[0],d.atTime(9,5));eq(one[1],null);
   System.out.println("PASS: "+assertions+" calculation assertions");
  }
 }
