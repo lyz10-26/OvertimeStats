@@ -49,10 +49,12 @@ public final class NoticeStore {
  public static void receive(Context c,String text,long posted,String key)throws Exception{receive(c,text,posted,key,text.contains("考勤打卡")||text.contains("工作通知")&&text.contains("考勤"));}
  public static void receive(Context c,String text,long posted,String key,boolean attendanceSource)throws Exception{
   synchronized(LOCK){SharedPreferences p=c.getSharedPreferences("attendance",0);if(!p.getBoolean("capture",true))return;
-   JSONArray notes=new JSONArray(p.getString("notices","[]"));String id=noticeId(key,posted,text);
-   for(int i=0;i<notes.length();i++)if(id.equals(notes.getJSONObject(i).optString("id")))return;
-   JSONObject note=new JSONObject();note.put("id",id);note.put("notificationKey",key);note.put("text",text);note.put("posted",posted);note.put("receivedAt",System.currentTimeMillis());note.put("attendanceSource",attendanceSource);
-   JSONObject all=load(p);applyParsed(p,note,all);JSONArray capped=new JSONArray();capped.put(note);for(int i=0;i<Math.min(notes.length(),99);i++)capped.put(notes.get(i));saveNotes(p,capped,posted,all);
+   JSONArray notes=new JSONArray(p.getString("notices","[]"));String id=noticeId(key,posted,text);JSONObject note=null;int existing=-1;
+   for(int i=0;i<notes.length();i++){JSONObject old=notes.getJSONObject(i);if(key.equals(old.optString("notificationKey"))&&posted==old.optLong("posted")){note=old;existing=i;break;}}
+   if(note==null){note=new JSONObject();note.put("id",id);note.put("receivedAt",System.currentTimeMillis());}
+   note.put("notificationKey",key);note.put("text",text);note.put("posted",posted);note.put("attendanceSource",attendanceSource);
+   JSONObject all=load(p);applyParsed(p,note,all);JSONArray capped=new JSONArray();capped.put(note);
+   for(int i=0;i<notes.length()&&capped.length()<100;i++)if(i!=existing)capped.put(notes.get(i));saveNotes(p,capped,posted,all);
   }
  }
  public static void markClicked(Context c,String key,long posted,int reason){
