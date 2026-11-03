@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
    row(body,"消息总数",a.length()+"条");row(body,"待确认",pending+"条");row(body,"已点击",clicked+"条");
    for(int i=0;i<a.length();i++){
     final JSONObject note=a.getJSONObject(i);LinearLayout item=col();item.setPadding(0,dp(12),0,dp(12));
-    String kind=note.optString("kind").equals("in")?"上班打卡":note.optString("kind").equals("out")?"下班打卡":"考勤通知";
+    String kind=note.optString("kind").equals("in")?"上班打卡":note.optString("kind").equals("out")?"下班打卡":note.optString("kind").equals("auto")?"极速打卡":"考勤通知";
     row(item,kind+"  "+note.optString("clock",""),note.optString("state","待确认"));
     String date=note.optString("date");label(item,date.isEmpty()?"日期待确认":date+" · "+note.optString("dateSource","待核对"),12,MUTED,false);
     String preview=note.optString("text","").replaceAll("\\s+"," ").trim();if(preview.length()>88)preview=preview.substring(0,88)+"…";
