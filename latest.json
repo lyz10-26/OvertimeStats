@@ -1,8 +1,8 @@
 {
-  "versionCode": 10,
-  "versionName": "1.6.0",
+  "versionCode": 11,
+  "versionName": "1.6.1",
   "channel": "release",
-  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.6.0/Overtime-1.6.0.apk",
-  "sha256": "f8772647680a15a8f2bf389accf6e60212d353888022daca77b405ce2ad11b52",
-  "notes": "1.6.0：增强钉钉通知提取与去重；完善消息详情和采集状态展示；优化更新版本判断；保留最早打卡为上班、最后打卡为下班的规则。"
+  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.6.1/Overtime-1.6.1.apk",
+  "sha256": "bcd963be9f6bb6605acaa56d110acd9ab92d537c6a7aca8cb7329021b7cd793c",
+  "notes": "1.6.1：新增通知监听心跳、最近钉钉通知接收时间及采集结果诊断；通知页面定时刷新；兼容钉钉极速打卡成功通知，提取实际打卡时间并按当日最早/最后打卡规则归类。"
 }
