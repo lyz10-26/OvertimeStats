@@ -30,6 +30,13 @@ public class NoticeParserTest {
   check(!NoticeParser.parse("工作通知\n考勤打卡：23:59 下班打卡·成功",LocalDateTime.of(2026,11,1,0,1).atZone(Rules.ZONE).toInstant().toEpochMilli()).certain);
   check(!NoticeParser.parse("工作通知\n考勤打卡：00:01 下班打卡·成功",LocalDateTime.of(2026,11,1,0,1).atZone(Rules.ZONE).toInstant().toEpochMilli()).certain);
   check(NoticeParser.parse("工作通知\n考勤打卡：19:09 下班打卡·成功",posted+86400000L).date.equals("2026-11-01"));
+  long quickIn=LocalDateTime.of(2026,10,31,8,50,42).atZone(Rules.ZONE).toInstant().toEpochMilli();
+  r=NoticeParser.parse("工作通知:民机外协人员\\n[3条]考勤打卡：\\n08:50 极速打卡·成功",quickIn,true);
+  check(r.certain);check(r.kind.equals("auto"));check(r.clock.equals("08:50"));check(r.date.equals("2026-10-31"));
+  long quickOut=LocalDateTime.of(2026,10,31,19,5,20).atZone(Rules.ZONE).toInstant().toEpochMilli();
+  r=NoticeParser.parse("工作通知:民机外协人员\\n考勤打卡：19:05 极速打卡·成功",quickOut,true);
+  check(r.certain);check(r.kind.equals("auto"));check(r.clock.equals("19:05"));
+  check(!NoticeParser.parse("工作通知:民机外协人员\\n考勤打卡：08:50 极速打卡·失败",quickIn,true).certain);
   System.out.println("PASS: "+n+" notification parser assertions");
  }
 }
