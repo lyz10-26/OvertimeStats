@@ -13,6 +13,7 @@ public final class NoticeStore {
   String state="待确认";
   NoticeParser.Result parsed=NoticeParser.parse(note.optString("text"),note.optLong("posted"),note.optBoolean("attendanceSource"));
   note.put("date",parsed.date);note.put("clock",parsed.clock);note.put("kind",parsed.kind);note.put("rest",parsed.rest);note.put("reason",parsed.reason);note.put("dateSource",parsed.inferredDate?"通知发布时间推定":"消息正文");
+  if(parsed.certain&&!p.getBoolean("autoNotice",true))note.put("reason","已识别到打卡时间，但自动记录功能已关闭，请人工确认");
   if(parsed.certain&&p.getBoolean("autoNotice",true)){
    JSONObject r=all.optJSONObject(parsed.date);if(r==null)r=new JSONObject();
    if("手动修正".equals(r.optString("source"))||"钉钉通知·人工确认".equals(r.optString("source"))){note.put("reason","已有人工修正记录，请确认后更新");}
@@ -53,8 +54,9 @@ public final class NoticeStore {
    for(int i=0;i<notes.length();i++){JSONObject old=notes.getJSONObject(i);if(key.equals(old.optString("notificationKey"))&&posted==old.optLong("posted")){note=old;existing=i;break;}}
    if(note==null){note=new JSONObject();note.put("id",id);note.put("receivedAt",System.currentTimeMillis());}
    note.put("notificationKey",key);note.put("text",text);note.put("posted",posted);note.put("attendanceSource",attendanceSource);
-   JSONObject all=load(p);applyParsed(p,note,all);JSONArray capped=new JSONArray();capped.put(note);
+   JSONObject all=load(p);String state=applyParsed(p,note,all);JSONArray capped=new JSONArray();capped.put(note);
    for(int i=0;i<notes.length()&&capped.length()<100;i++)if(i!=existing)capped.put(notes.get(i));saveNotes(p,capped,posted,all);
+   p.edit().putLong("lastCaptureAt",System.currentTimeMillis()).putString("lastCaptureResult",state).putString("lastCaptureReason",note.optString("reason","")).putString("lastCaptureNotificationKey",key).apply();
   }
  }
  public static void markClicked(Context c,String key,long posted,int reason){
