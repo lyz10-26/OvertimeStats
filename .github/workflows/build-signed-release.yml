@@ -88,22 +88,22 @@ jobs:
           UNSIGNED="app/build/outputs/apk/release/app-release-unsigned.apk"
           test -s "$UNSIGNED"
           "$BUILD_TOOLS/zipalign" -f -p 4 "$UNSIGNED" "$RUNNER_TEMP/aligned.apk"
-          "$BUILD_TOOLS/apksigner" sign --ks "$KEYSTORE" --ks-type JKS --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD --out "$RUNNER_TEMP/Overtime-1.6.0.apk" "$RUNNER_TEMP/aligned.apk"
-          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$RUNNER_TEMP/Overtime-1.6.0.apk" | tee "$RUNNER_TEMP/signature.txt"
+          "$BUILD_TOOLS/apksigner" sign --ks "$KEYSTORE" --ks-type JKS --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD --out "$RUNNER_TEMP/Overtime-1.6.1.apk" "$RUNNER_TEMP/aligned.apk"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$RUNNER_TEMP/Overtime-1.6.1.apk" | tee "$RUNNER_TEMP/signature.txt"
           ACTUAL="$(sed -n 's/.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/signature.txt" | head -n 1 | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
           EXPECTED="$(printf '%s' "$ANDROID_CERT_SHA256" | tr -d ':[:space:]' | tr '[:upper:]' '[:lower:]')"
           if [ "${#EXPECTED}" -ne 64 ] || [ "$ACTUAL" != "$EXPECTED" ]; then
             echo "Signing certificate mismatch. Refusing to publish this APK." >&2
             exit 1
           fi
-          "$BUILD_TOOLS/zipalign" -c 4 "$RUNNER_TEMP/Overtime-1.6.0.apk"
+          "$BUILD_TOOLS/zipalign" -c 4 "$RUNNER_TEMP/Overtime-1.6.1.apk"
           mkdir -p dist
-          cp "$RUNNER_TEMP/Overtime-1.6.0.apk" dist/
-          (cd dist && sha256sum Overtime-1.6.0.apk > SHA256SUMS)
+          cp "$RUNNER_TEMP/Overtime-1.6.1.apk" dist/
+          (cd dist && sha256sum Overtime-1.6.1.apk > SHA256SUMS)
       - name: Upload signed release candidate
         uses: actions/upload-artifact@v4
         with:
-          name: OvertimeStats-1.6.0-signed-candidate
+          name: OvertimeStats-1.6.1-signed-candidate
           path: dist/*
           if-no-files-found: error
           retention-days: 14
