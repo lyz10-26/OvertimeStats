@@ -103,5 +103,3 @@ gradle :app:assembleDebug
 - 28项计算断言、33项通知解析断言、7项服务端转换测试通过。
 - 11项更新元数据校验断言通过；安装包与前一版本签名一致。
 - Gradle构建配置未在当前环境验证；真机UI、后台通知、更新下载安装和真实企业接口尚未端到端验证。
-
-钉钉官方参考：[考勤示例](https://github.com/open-dingtalk/h5app-attendance-demo)。
