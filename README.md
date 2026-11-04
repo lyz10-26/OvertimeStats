@@ -6,13 +6,14 @@
 
 前往 [Releases](https://github.com/lyz10-26/OvertimeStats/releases) 下载最新版，请以 [Releases](https://github.com/lyz10-26/OvertimeStats/releases) 页面实际发布的安装包为准。
 
-## 1.6.1 · 通知采集状态优化（待发布）
+## 1.6.1 · 通知采集状态优化（正式版）
 
 - 通知监听服务增加最近心跳时间、最近钉钉通知接收时间和最近采集结果。
 - 兼容“极速打卡·成功”通知，提取实际打卡时间；上下班类型按当日最早/最后打卡规则确定。
 - 设置页底部简化为“开发者 · @π”，其他原版布局和功能保持不变。
 
-**版本信息：** versionName 1.6.1，versionCode 11。签名 APK 与 Release 发布完成后再提供下载。
+**版本信息：** versionName 1.6.1，versionCode 11。
+
 
 ## 1.6.0 · 钉钉消息与更新体验增强（正式版）
 
