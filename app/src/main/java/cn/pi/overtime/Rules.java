@@ -41,6 +41,6 @@ public final class Rules {
   ArrayList<LocalDateTime> sorted=new ArrayList<>(punches);Collections.sort(sorted);
   return new LocalDateTime[]{sorted.get(0),sorted.size()>1?sorted.get(sorted.size()-1):null};
  }
- public static String duration(long m){return (m/60)+"小时"+(m%60)+"分钟";}
+ public static String duration(long m){String sign=m<0?"−":"";long value=Math.abs(m);return sign+(value/60)+"小时"+(value%60)+"分钟";}
  public static String clock(LocalDate d,LocalDateTime t){if(t==null)return "--:--";return (t.toLocalDate().isAfter(d)?"次日 ":"")+t.format(DateTimeFormatter.ofPattern("HH:mm"));}
 }
