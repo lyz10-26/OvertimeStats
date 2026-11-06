@@ -6,8 +6,8 @@ android {
   applicationId 'cn.pi.overtime'
   minSdk 26
   targetSdk 34
-  versionCode 13
-  versionName '1.7.1'
+  versionCode 14
+  versionName '1.7.2'
  }
  compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
 }

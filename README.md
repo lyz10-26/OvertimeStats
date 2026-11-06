@@ -6,6 +6,13 @@
 
 前往 [Releases](https://github.com/lyz10-26/OvertimeStats/releases) 下载最新版，请以 [Releases](https://github.com/lyz10-26/OvertimeStats/releases) 页面实际发布的安装包为准。
 
+## 1.7.2 · 加班时长显示优化（待正式构建验证）
+
+- 累计加班、请假扣减、净补偿及还需加班统一以小时数显示，例如0.5h、1.5h、8h；负数显示为-4h。
+- 区分累计加班（扣假前）与净补偿工时（扣假后），保留原有补偿计算逻辑。
+
+**版本信息：** versionName 1.7.2，versionCode 14。
+
 ## 1.7.1 · 月度净补偿与剩余工作日修正（正式版）
 
 - 净补偿工时允许为负数，按已确认加班减去请假扣减计算；还需加班按目标减净补偿计算。
