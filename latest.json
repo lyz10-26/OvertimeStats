@@ -1,8 +1,8 @@
 {
-  "versionCode": 11,
-  "versionName": "1.6.1",
+  "versionCode": 12,
+  "versionName": "1.7.0",
   "channel": "release",
-  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.6.1/Overtime-1.6.1.apk",
-  "sha256": "bcd963be9f6bb6605acaa56d110acd9ab92d537c6a7aca8cb7329021b7cd793c",
-  "notes": "1.6.1：新增通知监听心跳、最近钉钉通知接收时间及采集结果诊断；通知页面定时刷新；兼容钉钉极速打卡成功通知，提取实际打卡时间并按当日最早/最后打卡规则归类。"
+  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.7.0/Overtime-1.7.0.apk",
+  "sha256": "d98e77ab48166d48feaabf0744080cb8068ddc68a62ae6ceddde1bf21ad2e613",
+  "notes": "1.7.0：新增月度加班目标、剩余工作日、全天请假8小时补偿、缺卡异常核对；09:00—09:30正常考勤额外扣减30分钟，每日加班按半小时向下取整。"
 }
