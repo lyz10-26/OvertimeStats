@@ -16,17 +16,24 @@ public final class Rules {
   int sec=in.toLocalTime().toSecondOfDay();sec=Math.max(30600,Math.min(32400,sec));
   return d.atStartOfDay().plusSeconds(sec+34200);
  }
+ public static boolean normalLateWindow(LocalDateTime in){
+  if(in==null)return false;LocalTime t=in.toLocalTime();
+  return !t.isBefore(LocalTime.of(9,0))&&!t.isAfter(LocalTime.of(9,30));
+ }
  public static String status(LocalDate d,LocalDateTime in,LocalDateTime out,boolean work){
   if(in==null)return "缺少上班打卡";
   if(!in.toLocalDate().equals(d))return "上班日期异常";
-  if(work&&in.toLocalTime().isAfter(LocalTime.of(9,0)))return "迟到记录 · 待确认";
+  if(work&&in.toLocalTime().isAfter(LocalTime.of(9,30)))return "迟到记录 · 待确认";
   if(out==null)return "缺少下班打卡";
   if(out.isBefore(in)||out.isAfter(d.plusDays(1).atTime(12,0)))return "打卡顺序异常";
   return "已确认";
  }
+ public static long roundDownHalfHour(long minutes){return Math.max(0,minutes)/30*30;}
  public static long minutes(LocalDate d,LocalDateTime in,LocalDateTime out,boolean work,int buffer){
   if(!status(d,in,out,work).equals("已确认"))return 0;
-  return Math.max(0,Duration.between(start(d,in,work,buffer),out).toMinutes());
+  long raw=Math.max(0,Duration.between(start(d,in,work,buffer),out).toMinutes());
+  if(work&&normalLateWindow(in))raw=Math.max(0,raw-30);
+  return roundDownHalfHour(raw);
  }
  public static LocalDateTime start(LocalDate d,LocalDateTime in,boolean work,int buffer){return work?end(d,in).plusMinutes(buffer):in.plusHours(1);}
  public static LocalDateTime[] punchBounds(Collection<LocalDateTime> punches){
