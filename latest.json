@@ -1,8 +1,8 @@
 {
-  "versionCode": 12,
-  "versionName": "1.7.0",
+  "versionCode": 13,
+  "versionName": "1.7.1",
   "channel": "release",
-  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.7.0/Overtime-1.7.0.apk",
-  "sha256": "d98e77ab48166d48feaabf0744080cb8068ddc68a62ae6ceddde1bf21ad2e613",
-  "notes": "1.7.0：新增月度加班目标、剩余工作日、全天请假8小时补偿、缺卡异常核对；09:00—09:30正常考勤额外扣减30分钟，每日加班按半小时向下取整。"
+  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.7.1/Overtime-1.7.1.apk",
+  "sha256": "4ea5f01802498cbbeed6c1799d74a15ab675f3a5d999ca28b52c63fed21a5aa3",
+  "notes": "1.7.1：净补偿工时允许为负数；还需加班按目标减净补偿计算；剩余工作日独立按工作日历统计，不因请假扣减而减少。"
 }
