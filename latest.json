@@ -1,8 +1,8 @@
 {
-  "versionCode": 13,
-  "versionName": "1.7.1",
+  "versionCode": 14,
+  "versionName": "1.7.2",
   "channel": "release",
-  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.7.1/Overtime-1.7.1.apk",
-  "sha256": "4ea5f01802498cbbeed6c1799d74a15ab675f3a5d999ca28b52c63fed21a5aa3",
-  "notes": "1.7.1：净补偿工时允许为负数；还需加班按目标减净补偿计算；剩余工作日独立按工作日历统计，不因请假扣减而减少。"
+  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.7.2/Overtime-1.7.2.apk",
+  "sha256": "6f9a606a6d1baac95ab137d681552f7a1f422a2f6b35e5b8f7d1ddef659ebfb2",
+  "notes": "1.7.2：加班及补偿时长统一使用h小时格式，支持半小时精度及负数；区分扣假前累计加班与扣假后净补偿。"
 }
