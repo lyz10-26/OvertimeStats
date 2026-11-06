@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
  long total=monthTotal(YearMonth.from(d),-1);link(body,"本月累计",Rules.duration(total),()->{month=YearMonth.from(d);tab=1;render();});
  LinearLayout monthCard=card("本月目标");YearMonth current=YearMonth.from(d);
  row(monthCard,"目标加班",Rules.duration(monthTargetMinutes(current)));
- row(monthCard,"净补偿 / 还需",Rules.duration(monthNetMinutes(current))+" / "+Rules.duration(monthGapMinutes(current)));
+ row(monthCard,"净补偿（扣假后）/ 还需",Rules.duration(monthNetMinutes(current))+" / "+Rules.duration(monthGapMinutes(current)));
  row(monthCard,"还需工作日",remainingWorkdays(current)+"天");
  row(monthCard,"异常待处理",monthAnomalies(current)+"天");
  monthCard.setOnClickListener(v->{month=current;tab=1;render();});divider(body);
@@ -74,9 +74,9 @@ public class MainActivity extends Activity {
   row(target,"本月工作日",monthWorkdays(ym)+"天");
   if(YearMonth.from(Rules.today()).equals(ym))row(target,"还需工作日",remainingWorkdays(ym)+"天");
   row(target,"目标加班工时",Rules.duration(monthTargetMinutes(ym)));
-  row(target,"已确认加班",Rules.duration(monthTotal(ym,-1)));
+  row(target,"已确认加班（扣假前）",Rules.duration(monthTotal(ym,-1)));
   row(target,"请假扣减",Rules.duration(monthLeaveMinutes(ym)));
-  row(target,"净补偿工时",Rules.duration(monthNetMinutes(ym)));
+  row(target,"净补偿工时（扣假后）",Rules.duration(monthNetMinutes(ym)));
   row(target,"还需加班",Rules.duration(monthGapMinutes(ym)));
   row(target,"异常 / 缺卡待处理",pending+"天");
   link(body,"查看异常与缺卡明细",pending+"天",()->new AlertDialog.Builder(this).setTitle(ym+" · 异常与缺卡").setMessage(anomalyReport(ym)).setPositiveButton("关闭",null).show());
