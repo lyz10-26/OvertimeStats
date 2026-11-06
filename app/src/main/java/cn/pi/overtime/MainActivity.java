@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
   return out.length()==0?"本月暂无待处理异常。":out.toString();
  }
  void summary(YearMonth ym){
-  space(body,18);center(body,"累计加班",13,MUTED,false);durationHero(body,monthTotal(ym,-1));
+  space(body,18);center(body,"累计加班（扣假前）",13,MUTED,false);durationHero(body,monthTotal(ym,-1));
   space(body,14);LinearLayout split=new LinearLayout(this);
   for(int type=0;type<2;type++){LinearLayout cell=col();center(cell,type==0?"工作日":"休息日",12,MUTED,false);center(cell,Rules.duration(monthTotal(ym,type)),15,INK,true);split.addView(cell,new LinearLayout.LayoutParams(0,-2,1));}
   body.addView(split);int pending=monthAnomalies(ym),days=0;
