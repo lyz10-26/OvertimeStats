@@ -1,8 +1,8 @@
 {
-  "versionCode": 15,
-  "versionName": "1.7.3",
+  "versionCode": 16,
+  "versionName": "1.7.4",
   "channel": "release",
-  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.7.3/Overtime-1.7.3.apk",
-  "sha256": "262915518ce3755ce3b8cea8043d9a607a74fcb7f12a022a1eb29316747e82e8",
-  "notes": "1.7.3：新增0.20和0.15两档月度超额工时比例，首页及统计页按所选比例动态计算目标和还需加班；优化检查更新点击反馈。"
+  "apkUrl": "https://github.com/lyz10-26/OvertimeStats/releases/download/v1.7.4/Overtime-1.7.4.apk",
+  "sha256": "5c00c114e0dd4e2bfdbfe91c9192d7f6178d4fcba41b10398f72f1ef29b8f8a4",
+  "notes": "1.7.4：新增自定义月度超额工时比例，首页及统计页累计展示扣假后净补偿工时。"
 }
