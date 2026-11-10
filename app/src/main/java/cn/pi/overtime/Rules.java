@@ -41,7 +41,7 @@ public final class Rules {
   ArrayList<LocalDateTime> sorted=new ArrayList<>(punches);Collections.sort(sorted);
   return new LocalDateTime[]{sorted.get(0),sorted.size()>1?sorted.get(sorted.size()-1):null};
  }
- public static long monthlyTargetMinutes(int workdays,int ratioPercent){if(workdays<0)throw new IllegalArgumentException("workdays");if(ratioPercent!=15&&ratioPercent!=20)throw new IllegalArgumentException("ratioPercent");return workdays*480L*ratioPercent/100L;}
+ public static long monthlyTargetMinutes(int workdays,int ratioBasisPoints){if(workdays<0)throw new IllegalArgumentException("workdays");if(ratioBasisPoints<1||ratioBasisPoints>10000)throw new IllegalArgumentException("ratioBasisPoints");return workdays*480L*ratioBasisPoints/10000L;}
  public static String duration(long m){String sign=m<0?"-":"";long value=Math.abs(m);String hours=String.format(Locale.ROOT,"%.1f",value/60.0);if(hours.endsWith(".0"))hours=hours.substring(0,hours.length()-2);return sign+hours+"h";}
  public static String clock(LocalDate d,LocalDateTime t){if(t==null)return "--:--";return (t.toLocalDate().isAfter(d)?"次日 ":"")+t.format(DateTimeFormatter.ofPattern("HH:mm"));}
 }
