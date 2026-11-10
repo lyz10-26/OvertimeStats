@@ -24,7 +24,7 @@ public class RulesTest {
   eq(Rules.minutes(d,Rules.time(d,"08:30"),Rules.time(d,"19:00"),true,30),30L);
   eq(Rules.minutes(d,Rules.time(d,"11:08"),Rules.time(d,"10:00"),false,30),0L);
   eq(Rules.start(d,Rules.time(d,"11:08"),false,30),d.atTime(12,8));
-  eq(Rules.monthlyTargetMinutes(20,20),1920L);eq(Rules.monthlyTargetMinutes(20,15),1440L);eq(Rules.monthlyTargetMinutes(22,20),2112L);eq(Rules.monthlyTargetMinutes(22,15),1584L);boolean badRatio=false;try{Rules.monthlyTargetMinutes(22,18);}catch(IllegalArgumentException e){badRatio=true;}eq(badRatio,true);
+  eq(Rules.monthlyTargetMinutes(20,2000),1920L);eq(Rules.monthlyTargetMinutes(20,1500),1440L);eq(Rules.monthlyTargetMinutes(22,2000),2112L);eq(Rules.monthlyTargetMinutes(22,1500),1584L);eq(Rules.monthlyTargetMinutes(20,1850),1776L);boolean badRatio=false;try{Rules.monthlyTargetMinutes(22,10001);}catch(IllegalArgumentException e){badRatio=true;}eq(badRatio,true);
   eq(Rules.duration(0),"0h");eq(Rules.duration(30),"0.5h");eq(Rules.duration(90),"1.5h");eq(Rules.duration(480),"8h");eq(Rules.duration(-240),"-4h");eq(Rules.duration(-30),"-0.5h");eq(Rules.duration(6000),"100h");
   eq(Rules.roundDownHalfHour(29),0L);eq(Rules.roundDownHalfHour(30),30L);eq(Rules.roundDownHalfHour(59),30L);eq(Rules.roundDownHalfHour(60),60L);
   LocalDateTime[] bounds=Rules.punchBounds(Arrays.asList(d.atTime(12,0),d.atTime(8,30),d.atTime(18,45),d.atTime(13,0)));
