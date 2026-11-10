@@ -71,7 +71,7 @@ public class MainActivity extends Activity {
  void summary(YearMonth ym){
   space(body,18);center(body,"累计加班（扣假后）",13,MUTED,false);durationHero(body,monthNetMinutes(ym));
   space(body,14);LinearLayout split=new LinearLayout(this);
-  for(int type=0;type<2;type++){LinearLayout cell=col();center(cell,type==0?"工作日":"休息日",12,MUTED,false);center(cell,Rules.duration(monthTotal(ym,type)),15,INK,true);split.addView(cell,new LinearLayout.LayoutParams(0,-2,1));}
+  for(int type=0;type<2;type++){LinearLayout cell=col();center(cell,type==0?"工作日（扣假前）":"休息日（扣假前）",12,MUTED,false);center(cell,Rules.duration(monthTotal(ym,type)),15,INK,true);split.addView(cell,new LinearLayout.LayoutParams(0,-2,1));}
   body.addView(split);int pending=monthAnomalies(ym),days=0;
   Iterator<String> keys=records.keys();while(keys.hasNext()){LocalDate d=LocalDate.parse(keys.next());if(YearMonth.from(d).equals(ym)&&mins(d,rec(d))>0)days++;}
   LinearLayout target=card("本月目标与补偿");
