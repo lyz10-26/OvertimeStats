@@ -156,3 +156,4 @@ jobs:
           git add latest.json
           git commit -m "Update latest release metadata to 1.7.3"
           git push
+# Retry release workflow after GitHub startup_failure; workflow_dispatch remains enabled.
