@@ -92,22 +92,22 @@ jobs:
           UNSIGNED="app/build/outputs/apk/release/app-release-unsigned.apk"
           test -s "$UNSIGNED"
           "$BUILD_TOOLS/zipalign" -f -p 4 "$UNSIGNED" "$RUNNER_TEMP/aligned.apk"
-          "$BUILD_TOOLS/apksigner" sign --ks "$KEYSTORE" --ks-type JKS --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD --out "$RUNNER_TEMP/Overtime-1.7.3.apk" "$RUNNER_TEMP/aligned.apk"
-          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$RUNNER_TEMP/Overtime-1.7.3.apk" | tee "$RUNNER_TEMP/signature.txt"
+          "$BUILD_TOOLS/apksigner" sign --ks "$KEYSTORE" --ks-type JKS --ks-pass env:ANDROID_KEYSTORE_PASSWORD --ks-key-alias "$ANDROID_KEY_ALIAS" --key-pass env:ANDROID_KEY_PASSWORD --out "$RUNNER_TEMP/Overtime-1.7.4.apk" "$RUNNER_TEMP/aligned.apk"
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$RUNNER_TEMP/Overtime-1.7.4.apk" | tee "$RUNNER_TEMP/signature.txt"
           ACTUAL="$(sed -n 's/.*certificate SHA-256 digest: //p' "$RUNNER_TEMP/signature.txt" | head -n 1 | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
           EXPECTED="$(printf '%s' "$ANDROID_CERT_SHA256" | tr -d ':[:space:]' | tr '[:upper:]' '[:lower:]')"
           if [ "${#EXPECTED}" -ne 64 ] || [ "$ACTUAL" != "$EXPECTED" ]; then
             echo "Signing certificate mismatch. Refusing to publish this APK." >&2
             exit 1
           fi
-          "$BUILD_TOOLS/zipalign" -c 4 "$RUNNER_TEMP/Overtime-1.7.3.apk"
+          "$BUILD_TOOLS/zipalign" -c 4 "$RUNNER_TEMP/Overtime-1.7.4.apk"
           mkdir -p dist
-          cp "$RUNNER_TEMP/Overtime-1.7.3.apk" dist/
-          (cd dist && sha256sum Overtime-1.7.3.apk > SHA256SUMS)
+          cp "$RUNNER_TEMP/Overtime-1.7.4.apk" dist/
+          (cd dist && sha256sum Overtime-1.7.4.apk > SHA256SUMS)
       - name: Upload signed release candidate
         uses: actions/upload-artifact@v4
         with:
-          name: OvertimeStats-1.7.3-signed-release
+          name: OvertimeStats-1.7.4-signed-release
           path: dist/*
           if-no-files-found: error
           retention-days: 14
@@ -115,45 +115,36 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v1.7.3 dist/Overtime-1.7.3.apk dist/SHA256SUMS \
-            --title "加班统计 v1.7.3" \
+          gh release create v1.7.4 dist/Overtime-1.7.4.apk dist/SHA256SUMS \
+            --title "加班统计 v1.7.4" \
             --notes-file <(cat <<'NOTES'
-          ## 月度净补偿与剩余工作日修正
-          - 新增0.20（20%）和0.15（15%）两档月度超额工时比例选择，默认0.20；切换后目标和还需加班动态重算。
-          - 月度目标按当月工作日数 × 8小时 × 所选比例计算。
-          - 检查更新行增强整行点击热区与涟漪触控反馈。
-          - 净补偿工时允许为负数，按已确认加班减去请假扣减计算。
-          - 还需加班按月度目标减净补偿工时计算，净补偿为负数时相应增加。
-          - 剩余工作日独立按工作日历统计，不因请假扣减而减少。
-          - 加班及补偿时长统一使用小时格式，例如0.5h、1.5h、8h；负数显示为-4h。
-          ## 月度目标与请假补偿
-          - 月度超额工时目标：当月工作日数 × 20% × 8小时。
-          - 首页及统计页显示目标工时、已确认加班、请假扣减、净补偿工时、还需加班和剩余工作日。
-          - 支持登记全天请假，按8小时扣减月度净补偿，后续有效加班逐步补回。
-          - 缺卡、迟到及请假与打卡冲突纳入待核对统计。
-          - 工作日09:00—09:30（含）按正常考勤处理，当天加班额外扣减30分钟；09:31起待确认。
-          - 每日加班分别向下取整至半小时；休息日仍先扣除1小时。
+          ## 自定义超额工时比例与扣假后累计展示
+          - 月度超额工时比例新增自定义百分比，保留15%和20%快捷选项，默认20%；自定义支持0.01%—100%、最多两位小数。
+          - 自定义比例保存在本机，首页及统计页的月度目标、还需加班按所选比例动态重算，并兼容旧版15%和20%设置。
+          - 首页本月累计及统计页累计主数值改为扣除请假工时后的净补偿工时，允许显示负数。
+          - 统计明细继续列出扣假前加班、请假扣减和扣假后净补偿，分项标签明确标注扣假前。
+          - 保留原有考勤采集、加班计算、剩余工作日及签名证书校验逻辑。
           NOTES
           )
       - name: Update latest version metadata
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          APK_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v1.7.3/Overtime-1.7.3.apk"
-          SHA256="$(sha256sum dist/Overtime-1.7.3.apk | awk '{print $1}')"
+          APK_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v1.7.4/Overtime-1.7.4.apk"
+          SHA256="$(sha256sum dist/Overtime-1.7.4.apk | awk '{print $1}')"
           cat > latest.json <<EOF
           {
-            "versionCode": 15,
-            "versionName": "1.7.3",
+            "versionCode": 16,
+            "versionName": "1.7.4",
             "channel": "release",
             "apkUrl": "$APK_URL",
             "sha256": "$SHA256",
-            "notes": "1.7.3：新增0.20和0.15两档月度超额工时比例，首页及统计页按所选比例动态计算目标和还需加班；优化检查更新点击反馈。"
+            "notes": "1.7.4：新增自定义月度超额工时比例，首页及统计页累计展示扣假后净补偿工时。"
           }
           EOF
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add latest.json
-          git commit -m "Update latest release metadata to 1.7.3"
+          git commit -m "Update latest release metadata to 1.7.4"
           git push
 # Retry release workflow after GitHub startup_failure; workflow_dispatch remains enabled.
